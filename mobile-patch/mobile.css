@@ -483,7 +483,7 @@ pre, code, [class*="command"], [class*="_line_"] {
   white-space: pre-wrap !important;
 }
 
-/* 会话顶栏只给左侧三条杠留空；退出已改成启动页临时按钮 + 系统返回 */
+/* 会话顶栏只给左侧三条杠留空；原生退出浮钮已去掉，用系统返回 */
 @media (max-width: 1200px) {
   [class*="_header"]:not([class*="headerUtilities"]) {
     padding-left: 52px !important;

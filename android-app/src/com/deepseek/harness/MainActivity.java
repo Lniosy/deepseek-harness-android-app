@@ -111,7 +111,6 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     private ImageView splashLogo;
     private TextView splashBrand;
-    private Button exitBtn;
     private final Handler ui = new Handler(Looper.getMainLooper());
     // 运行时确定的 dshroot 目录（外部公共目录优先，失败回退内部 files/payload/dshroot）
     private File dshrootDir = null;
@@ -385,24 +384,6 @@ public class MainActivity extends Activity {
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         bp.gravity = Gravity.CENTER;
         root.addView(box, bp);
-
-        // 只在启动页显示：进对话后收起，避免挡标题 / 设置 Tab / 发送钮。日常退出用系统返回。
-        exitBtn = new Button(this);
-        exitBtn.setText("退出");
-        exitBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        exitBtn.setTextColor(Color.WHITE);
-        exitBtn.setAllCaps(false);
-        exitBtn.setBackgroundColor(Color.parseColor("#66000000"));
-        exitBtn.setPadding(dp(12), dp(4), dp(12), dp(4));
-        FrameLayout.LayoutParams ebp = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        ebp.gravity = Gravity.TOP | Gravity.END;
-        ebp.topMargin = dp(12);
-        ebp.rightMargin = dp(12);
-        exitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { confirmExit(); }
-        });
-        root.addView(exitBtn, ebp);
 
         // 启动页本身是深色，先跟启动页；WebView 主题就绪后再由 JsBridge 同步
         applySystemBars(true);
@@ -2722,7 +2703,6 @@ public class MainActivity extends Activity {
                     progressBar.setIndeterminate(false);
                     progressBar.setVisibility(View.GONE);
                 }
-                if (exitBtn != null) exitBtn.setVisibility(View.GONE);
                 webView.loadUrl(homeUrl());
             }
         });
