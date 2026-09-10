@@ -2,9 +2,10 @@
 
 ### 🐛 修复（社区 @Lniosy）
 - **高 DPI 竖屏 WebView**：关掉桌面宽视口再缩放（`useWideViewPort` / `loadWithOverviewMode`），避免英文空格丢失、字母重影；页面加载后写入 `viewport=device-width` 并标记 `dsh-android-webview`
-- **原生「退出」挡顶栏**：按钮从右上角挪到右下角，不再盖住会话标题、后台任务和设置 Tab「插件」
+- **原生「退出」挡顶栏**：启动页仍显示退出；进对话后收起，改用系统返回确认退出，不再盖住标题、设置 Tab、发送钮
 - **手机布局断点**：`mobile.css` 窄屏规则从 640px 放到 1200px，覆盖小米 15 Pro 一类 1440×3200 @600dpi 设备；正文不再 `break-all` 拆英文
 - **状态栏 / 手势条黑边**：去掉 `Theme.Black.NoTitleBar.Fullscreen`，改用 `DshAppTheme` 给状态栏和底部导航条上色（浅 `#f7f8fb` / 深 `#0b0f1a`），运行时再跟页面深浅色同步，并关掉手势条对比蒙层
+- **模型列表缺 V4.1**：内置 DSH 目录写死 V4-Flash/V4-Pro，不会请求 `/v1/models`；启动时若没有 `deepseek-flash` 则写入 `settings.yaml`（DeepSeek-V4.1-Flash，官方 API 名）
 
 ---
 

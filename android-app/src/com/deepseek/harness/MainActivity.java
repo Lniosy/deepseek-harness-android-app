@@ -111,6 +111,7 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     private ImageView splashLogo;
     private TextView splashBrand;
+    private Button exitBtn;
     private final Handler ui = new Handler(Looper.getMainLooper());
     // 运行时确定的 dshroot 目录（外部公共目录优先，失败回退内部 files/payload/dshroot）
     private File dshrootDir = null;
@@ -385,8 +386,8 @@ public class MainActivity extends Activity {
         bp.gravity = Gravity.CENTER;
         root.addView(box, bp);
 
-        // 浮动退出按钮（右上角）：点击确认后退出 deepdive
-        Button exitBtn = new Button(this);
+        // 只在启动页显示：进对话后收起，避免挡标题 / 设置 Tab / 发送钮。日常退出用系统返回。
+        exitBtn = new Button(this);
         exitBtn.setText("退出");
         exitBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         exitBtn.setTextColor(Color.WHITE);
@@ -395,9 +396,8 @@ public class MainActivity extends Activity {
         exitBtn.setPadding(dp(12), dp(4), dp(12), dp(4));
         FrameLayout.LayoutParams ebp = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        // 放到右下角，避开顶栏标题 / 设置页 Tab / 系统状态栏
-        ebp.gravity = Gravity.BOTTOM | Gravity.END;
-        ebp.bottomMargin = dp(20);
+        ebp.gravity = Gravity.TOP | Gravity.END;
+        ebp.topMargin = dp(12);
         ebp.rightMargin = dp(12);
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { confirmExit(); }
@@ -1407,6 +1407,7 @@ public class MainActivity extends Activity {
                     applyLinks(payload);
                     setExecutables(payload);
                     ensurePatchConfig(payload); // ③ 补丁启动自检：cordis.patch.yml 缺失/被改则自动补齐
+                    ensureDeepSeekV41Catalog(payload); // 官方目录未含今日上线的 deepseek-flash (V4.1)
                     if (healthOk()) { loadHome(); return; }
                     showIndeterminate("正在启动 DeepSeek Harness…");
                     spawnNode(payload);
@@ -1487,6 +1488,46 @@ public class MainActivity extends Activity {
             }
         } catch (Throwable t) {
             Log.w(TAG, "ensurePatchConfig error", t);
+        }
+    }
+
+    /** 内置 DSH 目录是写死的 V4-Flash / V4-Pro，不会去拉 /v1/models。
+     *  2026-09-10 起官方最新 Flash 是 deepseek-flash（V4.1-Flash），旧内核列表没有它。
+     *  只在 settings.yaml 还没有该 id 且没有现成 llm-deepseek 段时追加，不覆盖用户配置。 */
+    private void ensureDeepSeekV41Catalog(File payload) {
+        try {
+            File settings = new File(payload, "dshhome/settings.yaml");
+            String content = settings.exists() ? readFileText(settings) : "";
+            if (content.contains("deepseek-flash")) return;
+            if (content.contains("llm-deepseek:")) {
+                Log.i(TAG, "settings.yaml already has llm-deepseek; skip V4.1 append");
+                return;
+            }
+            String block = "\nllm-deepseek:\n"
+                    + "  models:\n"
+                    + "    - id: deepseek-flash\n"
+                    + "      name: DeepSeek-V4.1-Flash\n"
+                    + "      contextWindow: 1000000\n"
+                    + "      inputModalities: [text, image]\n"
+                    + "    - id: deepseek-v4-flash\n"
+                    + "      name: DeepSeek-V4-Flash\n"
+                    + "      contextWindow: 1000000\n"
+                    + "    - id: deepseek-v4-pro\n"
+                    + "      name: DeepSeek-V4-Pro\n"
+                    + "      contextWindow: 1000000\n"
+                    + "    - id: deepseek-v4-flash-vision-exp\n"
+                    + "      name: DeepSeek-V4-Flash-Vision-Exp\n"
+                    + "      contextWindow: 1000000\n"
+                    + "      inputModalities: [text, image]\n";
+            FileOutputStream fos = new FileOutputStream(settings, true);
+            try {
+                fos.write(block.getBytes("UTF-8"));
+            } finally {
+                fos.close();
+            }
+            Log.i(TAG, "appended DeepSeek-V4.1-Flash catalog to settings.yaml");
+        } catch (Throwable t) {
+            Log.w(TAG, "ensureDeepSeekV41Catalog error", t);
         }
     }
 
@@ -2681,6 +2722,7 @@ public class MainActivity extends Activity {
                     progressBar.setIndeterminate(false);
                     progressBar.setVisibility(View.GONE);
                 }
+                if (exitBtn != null) exitBtn.setVisibility(View.GONE);
                 webView.loadUrl(homeUrl());
             }
         });

@@ -483,21 +483,15 @@ pre, code, [class*="command"], [class*="_line_"] {
   white-space: pre-wrap !important;
 }
 
-/* 会话顶栏给原生「退出」和三条杠留空 */
+/* 会话顶栏只给左侧三条杠留空；退出已改成启动页临时按钮 + 系统返回 */
 @media (max-width: 1200px) {
   [class*="_header"]:not([class*="headerUtilities"]) {
     padding-left: 52px !important;
-    padding-right: 88px !important;
+    padding-right: 12px !important;
     box-sizing: border-box !important;
   }
   [class*="headerUtilities"] {
-    padding-right: 80px !important;
-    max-width: calc(100vw - 140px) !important;
-  }
-  /* 设置弹层顶栏 Tab 不要顶到右上角退出 */
-  [class*="_nav"] {
-    padding-right: 72px !important;
-    box-sizing: border-box !important;
+    max-width: calc(100vw - 72px) !important;
   }
   /* 设置行：说明在上、控件在下，避免「模式」被拆成「模 / 式」 */
   [class*="_row"],
