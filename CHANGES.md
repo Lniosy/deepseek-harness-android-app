@@ -1,3 +1,12 @@
+## 未发布
+
+### 🐛 修复（社区 @Lniosy）
+- **高 DPI 竖屏 WebView**：关掉桌面宽视口再缩放（`useWideViewPort` / `loadWithOverviewMode`），避免英文空格丢失、字母重影；页面加载后写入 `viewport=device-width` 并标记 `dsh-android-webview`
+- **原生「退出」挡顶栏**：按钮从右上角挪到右下角，不再盖住会话标题、后台任务和设置 Tab「插件」
+- **手机布局断点**：`mobile.css` 窄屏规则从 640px 放到 1200px，覆盖小米 15 Pro 一类 1440×3200 @600dpi 设备；正文不再 `break-all` 拆英文
+
+---
+
 ## v1.7.5（正式版 + Lite 共存版 + 兼容版 · 2026-08-28）
 
 > 内核 DSH 0.1.1-rc.2，versionCode 21，targetSdk 28。Termux 共存修复 + 无障碍手势引擎 + 工具输出校验修复。

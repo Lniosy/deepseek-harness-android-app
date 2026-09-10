@@ -145,8 +145,9 @@ public class MainActivity extends Activity {
         ws.setDomStorageEnabled(true);
         ws.setAllowFileAccess(true);
         ws.setDatabaseEnabled(true);
-        ws.setUseWideViewPort(true);
-        ws.setLoadWithOverviewMode(true);
+        // 小米等高 DPI 竖屏：不要按桌面宽视口再缩放，否则英文空格丢失、标题重叠。
+        ws.setUseWideViewPort(false);
+        ws.setLoadWithOverviewMode(false);
         ws.setSupportZoom(false);
         ws.setBuiltInZoomControls(false);
         ws.setDisplayZoomControls(false);
@@ -172,6 +173,13 @@ public class MainActivity extends Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 errorRetries = 0;
+                view.evaluateJavascript(
+                        "(function(){var m=document.querySelector('meta[name=viewport]');"
+                                + "if(!m){m=document.createElement('meta');m.name='viewport';"
+                                + "document.head&&document.head.appendChild(m);}"
+                                + "m.content='width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover';"
+                                + "document.documentElement.classList.add('dsh-android-webview');})();",
+                        null);
             }
         });
 
@@ -375,8 +383,9 @@ public class MainActivity extends Activity {
         exitBtn.setPadding(dp(12), dp(4), dp(12), dp(4));
         FrameLayout.LayoutParams ebp = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        ebp.gravity = Gravity.TOP | Gravity.END;
-        ebp.topMargin = dp(28);
+        // 放到右下角，避开顶栏标题 / 设置页 Tab / 系统状态栏
+        ebp.gravity = Gravity.BOTTOM | Gravity.END;
+        ebp.bottomMargin = dp(20);
         ebp.rightMargin = dp(12);
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { confirmExit(); }

@@ -8,6 +8,31 @@
  * 注：窄屏侧栏改造（三条杠 + 浮层）在核心源码 dsh-client-ui-layout，不在此文件。
  */
 (function () {
+  try {
+    var meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'viewport';
+      if (document.head) document.head.appendChild(meta);
+    }
+    meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover';
+    document.documentElement.classList.add('dsh-android-webview');
+    function fitPhoneWidth() {
+      var root = document.getElementById('root') || document.body;
+      if (!root) return;
+      root.style.minWidth = '0';
+      root.style.width = '100%';
+      root.style.maxWidth = '100vw';
+      document.documentElement.style.maxWidth = '100vw';
+      document.body && (document.body.style.maxWidth = '100vw');
+    }
+    fitPhoneWidth();
+    setTimeout(fitPhoneWidth, 200);
+    setTimeout(fitPhoneWidth, 800);
+  } catch (e) {}
+})();
+
+(function () {
   if (!window.visualViewport) return;
   var vv = window.visualViewport;
   var app = document.getElementById('root') || document.body;
