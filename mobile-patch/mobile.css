@@ -443,6 +443,11 @@ html {
   -webkit-text-size-adjust: 100% !important;
   text-size-adjust: 100% !important;
   max-width: 100vw !important;
+  background: #f7f8fb;
+}
+html.dsh-android-webview[data-ds-dark-theme],
+html[data-ds-dark-theme] {
+  background: #0b0f1a;
 }
 html.dsh-android-webview #root,
 #root {

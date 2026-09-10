@@ -33,6 +33,40 @@
 })();
 
 (function () {
+  function isDarkTheme() {
+    var el = document.documentElement;
+    if (!el) return false;
+    if (el.hasAttribute('data-ds-dark-theme')) return true;
+    if (el.getAttribute('data-theme') === 'dark') return true;
+    if (el.classList.contains('dark')) return true;
+    if (el.hasAttribute('data-ds-light-theme')) return false;
+    if (el.getAttribute('data-theme') === 'light') return false;
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    } catch (e) {
+      return false;
+    }
+  }
+  function notifyAndroidBars() {
+    try {
+      if (window.DshAndroid && window.DshAndroid.onThemeChanged) {
+        window.DshAndroid.onThemeChanged(isDarkTheme());
+      }
+    } catch (e) {}
+  }
+  notifyAndroidBars();
+  setTimeout(notifyAndroidBars, 300);
+  setTimeout(notifyAndroidBars, 1200);
+  try {
+    var mo = new MutationObserver(notifyAndroidBars);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-ds-dark-theme', 'data-ds-light-theme', 'data-theme', 'class']
+    });
+  } catch (e) {}
+})();
+
+(function () {
   if (!window.visualViewport) return;
   var vv = window.visualViewport;
   var app = document.getElementById('root') || document.body;
